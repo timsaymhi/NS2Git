@@ -3,6 +3,12 @@
  * @NScriptType MapReduceScript
  * @NModuleScope Public
  */
+
+const gitToken = 'TOKEN'; // GitHub API Token
+const gitOwner = 'USER'; // GitHub Username
+const userLastName = 'LASTNAME'; // Last name of user you want to search
+const gitType = 'Bearer';
+
 define(['N/query', 'N/config','N/runtime', 'N/https', 'N/encode', 'N/file', 'N/record'],
 // NS -> GIT Sync will sync any script to GitHub for a given user last name. Since GitHub is used as a reference, assuming latest updates in NetSuite, script will delete and recreate repository.
 
@@ -53,10 +59,6 @@ function _sendToGit(git_repo,id,type,title,deploy,gitToken,gitType,gitOwner) {
 }
 
 function getInputData() {
-	const gitToken = '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'; // GitHub API Token
-	const gitType = 'Bearer';
-	const gitOwner = 'timsaymhi'; // GitHub Username
-	const userLastName = 'Sayles'; // Last name of user you want to search
 	var configRecObj = config.load({
 		type: config.Type.COMPANY_INFORMATION
 	});
@@ -84,15 +86,12 @@ function getInputData() {
 				url: git_url,
 				headers:header
 			});
-			log.debug('Del Response', apiResponse.body);
 			var git_url = "https://api.github.com/user/repos";
 			var apiResponse=https.post({
 				url: git_url,
 				headers:header,
 				body:JSON.stringify(formData)
 			});
-			log.debug('Form Data', JSON.stringify(formData));
-			log.debug('Create sent', apiResponse.body);
 			var responseBody = JSON.parse(apiResponse.body);
 			var repoName = responseBody.name||'';
 			return searchInfo;
@@ -155,20 +154,13 @@ function searchForInfo(uId, searchFiles) {
 }
 
 function map(context) {
-	const gitToken = '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'; // GitHub API Token
-	const gitType = 'Bearer';
-	const gitOwner = 'timsaymhi'; // GitHub Username
-	const userLastName = 'Sayles'; // Last name of user you want to search
+	
 	var data = JSON.parse(context.value);
 	var repoName = runtime.accountId;
 	_sendToGit(repoName, data.id, data.type, data.title, data.scriptid, gitToken, gitType, gitOwner);
 }
 
 function summarize(context) {
-	const gitToken = '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'; // GitHub API Token
-	const gitType = 'Bearer';
-	const gitOwner = 'timsaymhi'; // GitHub Username
-	const userLastName = 'Sayles'; // Last name of user you want to search
 	var folders = ["Client","MRS","Other","Scheduled","Suitelet","User"];
 	folders.forEach(function(f) {
 	var formData = {};
